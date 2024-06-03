@@ -12,10 +12,14 @@ client = gspread.authorize(creds)
 # Função para obter dados do Google Sheets
 @st.cache_data(ttl=3600)  # Cache por uma hora
 def get_data():
-    sheet = client.open("ClimaConecta").sheet1
-    data = sheet.get_all_records()
-    df = pd.DataFrame(data)
-    return df
+    try:
+        sheet = client.open("ClimaConecta").sheet1
+        data = sheet.get_all_records()
+        df = pd.DataFrame(data)
+        return df
+    except gspread.SpreadsheetNotFound:
+        st.error("Planilha não encontrada. Verifique o nome da planilha e se ela foi compartilhada com a conta de serviço.")
+        return pd.DataFrame()
 
 # Título do aplicativo
 st.title("Dados de Temperatura e Umidade")
@@ -23,17 +27,19 @@ st.title("Dados de Temperatura e Umidade")
 # Carregar dados
 df = get_data()
 
-# Mostrar dados
-st.write("Última atualização: ", time.ctime())
-st.write(df)
+# Verificar se as colunas existem
+st.write("Colunas disponíveis:", df.columns)
 
-# Adicionar um gráfico interativo
-st.line_chart(df[['Temperatura', 'Umidade']])
-
-# Atualizar dados manualmente
-if st.button('Atualizar dados'):
-    st.cache_data.clear()
-    df = get_data()
+if not df.empty:
+    # Mostrar dados
     st.write("Última atualização: ", time.ctime())
     st.write(df)
-    st.line_chart(df[['Temperatura', 'Umidade']])
+
+    # Verificar se as colunas "Temperatura" e "Umidade" existem
+    if 'Temperatura' in df.columns and 'Umidade' in df.columns:
+        # Adicionar um gráfico interativo
+        st.line_chart(df[['Temperatura', 'Umidade']])
+    else:
+        st.error("As colunas 'Temperatura' e/ou 'Umidade' não foram encontradas.")
+else:
+    st.error("Erro ao carregar os dados. Verifique a configuração da planilha.")
