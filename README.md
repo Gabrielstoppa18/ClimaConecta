@@ -20,7 +20,7 @@
 ### Hardware
 
 - ESP8266
-- Sensor de temperatura e umidade (DHT22 ou DHT11)
+- Sensor de temperatura e umidade DHT11
 
 ### Software
 
