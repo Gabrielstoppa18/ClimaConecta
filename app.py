@@ -16,16 +16,16 @@ def get_data():
         sheet = client.open("ClimaConecta").sheet1
         data = sheet.get_all_records()
         df = pd.DataFrame(data)
-        return df
+        return df, sheet.col_values(1)  # Retorna também os cabeçalhos das colunas
     except gspread.SpreadsheetNotFound:
         st.error("Planilha não encontrada. Verifique o nome da planilha e se ela foi compartilhada com a conta de serviço.")
-        return pd.DataFrame()
+        return pd.DataFrame(), []
 
 # Título do aplicativo
 st.title("Dados de Temperatura e Umidade")
 
 # Carregar dados
-df = get_data()
+df, headers = get_data()
 
 if not df.empty:
     # Mostrar dados
@@ -33,10 +33,14 @@ if not df.empty:
     st.write(df)
 
     # Verificar se as colunas "Temperatura" e "Umidade" existem
-    if 'Temperatura' in df.columns and 'Umidade' in df.columns:
+    if 'Temperatura (°C)' in df.columns and 'Umidade (%) ' in df.columns and 'Data' in df.columns and 'Hora' in df.columns:
         # Adicionar um gráfico interativo
-        st.line_chart(df[['Temperatura', 'Umidade']])
+        st.line_chart(df[['Temperatura (°C)', 'Umidade (%) ','Data','Hora']])
     else:
         st.error("As colunas 'Temperatura' e/ou 'Umidade' não foram encontradas.")
+
+    # Adicionar labels
+    st.write("Labels:")
+    st.write(headers)
 else:
     st.error("Erro ao carregar os dados. Verifique a configuração da planilha.")
