@@ -1,18 +1,18 @@
 import streamlit as st
 import pandas as pd
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 import time
 
 # Configurar a conexão com a API do Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+creds = Credentials.from_service_account_file("credentials.json", scopes=scope)
 client = gspread.authorize(creds)
 
 # Função para obter dados do Google Sheets
-@st.cache(ttl=3600)  # Cache por uma hora
+@st.cache_data(ttl=3600)  # Cache por uma hora
 def get_data():
-    sheet = client.open("ClimaConecta").sheet1
+    sheet = client.open("Nome da sua planilha").sheet1
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
     return df
@@ -32,7 +32,7 @@ st.line_chart(df[['Temperatura', 'Umidade']])
 
 # Atualizar dados manualmente
 if st.button('Atualizar dados'):
-    st.cache.clear()
+    st.cache_data.clear()
     df = get_data()
     st.write("Última atualização: ", time.ctime())
     st.write(df)
