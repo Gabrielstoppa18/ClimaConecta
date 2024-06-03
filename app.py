@@ -6,13 +6,13 @@ import time
 
 # Configurar a conexão com a API do Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("path/to/your/credentials.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
 
 # Função para obter dados do Google Sheets
 @st.cache(ttl=3600)  # Cache por uma hora
 def get_data():
-    sheet = client.open("temp_umid").sheet1
+    sheet = client.open("ClimaConecta").sheet1
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
     return df
