@@ -33,14 +33,10 @@ if not df.empty:
     st.write(df)
 
     # Verificar se as colunas "Temperatura" e "Umidade" existem
-    if 'Temperatura (°C)' in df.columns and 'Umidade (%) ' in df.columns and 'Data' in df.columns and 'Hora' in df.columns:
+    if 'Temperatura' in df.columns and 'Umidade' in df.columns:
         # Adicionar um gráfico interativo
-        st.line_chart(df[['Temperatura (°C)', 'Umidade (%) ','Data','Hora']])
+        st.line_chart(df.set_index('Data')[['Temperatura', 'Umidade']])
     else:
         st.error("As colunas 'Temperatura' e/ou 'Umidade' não foram encontradas.")
-
-    # Adicionar labels
-    st.write("Labels:")
-    st.write(headers)
 else:
     st.error("Erro ao carregar os dados. Verifique a configuração da planilha.")
