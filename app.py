@@ -12,7 +12,7 @@ client = gspread.authorize(creds)
 # Função para obter dados do Google Sheets
 @st.cache_data(ttl=3600)  # Cache por uma hora
 def get_data():
-    sheet = client.open("Nome da sua planilha").sheet1
+    sheet = client.open("ClimaConecta").sheet1
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
     return df
