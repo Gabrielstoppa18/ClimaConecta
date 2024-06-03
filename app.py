@@ -27,9 +27,6 @@ st.title("Dados de Temperatura e Umidade")
 # Carregar dados
 df = get_data()
 
-# Verificar se as colunas existem
-st.write("Colunas disponíveis:", df.columns)
-
 if not df.empty:
     # Mostrar dados
     st.write("Última atualização: ", time.ctime())
